@@ -21,7 +21,7 @@ module.exports = (sequelize) => {
     healthScore: {
       type: DataTypes.INTEGER
     },
-    step: {
+    steps: {
       type: DataTypes.TEXT
     },
     image: {
