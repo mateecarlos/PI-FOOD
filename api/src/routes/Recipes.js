@@ -2,6 +2,7 @@ const { Router } = require("express");
 const axios = require("axios");
 const { API_KEY } = process.env;
 const { Recipe, Diet } = require("../db")
+const router = Router();
 
 
 ////////////// CONTROLLERS ///////////
@@ -12,7 +13,7 @@ const getApiInfo = async () => {
         const apiData = await apiUrl.data.map((e) => {
         return {
             id: e.id,
-            name: e.name,
+            name: e.title,
             summary: e.summary,
             healthScore: e.healthScore,
             steps: e.steps,
@@ -42,3 +43,31 @@ const getAllRecipes = async () => {
     const infoTotal = apiData.concat(dbInfo);
     return infoTotal;
 }
+
+
+///////// ROUTER PARA TRAER POR NAME(query) ////////
+router.get("/", async (req, res) => {
+    const name =  req.query.name
+    try {
+        const totalRecipes = await getAllRecipes();
+        
+        // Si hay nombre pasarlo a minuscula //
+        if(name) {
+            const recipeName = await totalRecipes.filter((e) => 
+            e.name.toLowerCase().include(name.toLowerCase())
+            )
+            recipeName.length
+            ? res.status(200).json(recipeName)
+            : res.status(404).send("La receta no existe")    
+        // Si no hay mostrar todas las recetas //
+        } else { 
+            res.status(202).json(totalRecipes)
+        }
+    } catch(error) {
+        res.status(404).send("No funciona")
+    }
+})
+    
+    
+
+module.exports = router;
